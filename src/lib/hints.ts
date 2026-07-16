@@ -1,73 +1,56 @@
 import "server-only";
-import Anthropic from "@anthropic-ai/sdk";
+import { GoogleGenAI, Type } from "@google/genai";
 import type { Direction, HintBundle } from "./types";
 import { findEntry } from "./puzzle";
 
 const cache = new Map<string, HintBundle>();
 
-let client: Anthropic | null = null;
-function getClient(): Anthropic {
+let client: GoogleGenAI | null = null;
+function getClient(): GoogleGenAI {
   if (!client) {
-    const apiKey = process.env.ANTHROPIC_API_KEY;
+    const apiKey = process.env.GEMINI_API_KEY;
     if (!apiKey) {
       throw new Error(
-        "ANTHROPIC_API_KEY is not set. Add it to .env.local to enable hints."
+        "GEMINI_API_KEY is not set. Add it to .env.local to enable hints (get a free key at aistudio.google.com/apikey)."
       );
     }
-    client = new Anthropic({ apiKey });
+    client = new GoogleGenAI({ apiKey });
   }
   return client;
 }
 
-const HINT_TOOL = {
-  name: "provide_crossword_hints",
-  description:
-    "Provide three progressively revealing hints and a short post-solve explanation for a crossword clue.",
-  input_schema: {
-    type: "object" as const,
-    properties: {
-      hints: {
-        type: "array" as const,
-        minItems: 3,
-        maxItems: 3,
-        items: {
-          type: "object" as const,
-          properties: {
-            text: {
-              type: "string" as const,
-              description: "The hint shown to the solver.",
-            },
-            reference: {
-              type: ["string", "null"] as const,
-              description:
-                "One-sentence gist of any historic/cultural/pop-culture reference relevant to this hint, or null if none.",
-            },
+const RESPONSE_SCHEMA = {
+  type: Type.OBJECT,
+  properties: {
+    hints: {
+      type: Type.ARRAY,
+      items: {
+        type: Type.OBJECT,
+        properties: {
+          text: {
+            type: Type.STRING,
+            description: "The hint shown to the solver.",
           },
-          required: ["text", "reference"],
+          reference: {
+            type: Type.STRING,
+            nullable: true,
+            description:
+              "One-sentence gist of any historic/cultural/pop-culture reference relevant to this hint, or null if none.",
+          },
         },
-      },
-      explanation: {
-        type: "string" as const,
-        description:
-          "Shown only after the answer is revealed: 1-2 sentences on the wordplay/reasoning and any reference, for learning purposes.",
+        required: ["text", "reference"],
       },
     },
-    required: ["hints", "explanation"],
+    explanation: {
+      type: Type.STRING,
+      description:
+        "Shown only after the answer is revealed: 1-2 sentences on the wordplay/reasoning and any reference, for learning purposes.",
+    },
   },
+  required: ["hints", "explanation"],
 };
 
-async function generate(
-  clue: string,
-  answer: string,
-  direction: Direction
-): Promise<HintBundle> {
-  const anthropic = getClient();
-
-  const message = await anthropic.messages.create({
-    model: "claude-sonnet-5",
-    max_tokens: 1024,
-    temperature: 0.4,
-    system: `You are a warm, encouraging crossword coach helping someone LEARN to solve NYT-style crosswords, not just get the answer. You will be given a clue and its correct answer (ground truth, already verified). Produce exactly 3 progressively revealing hints plus a short post-solve explanation, via the provide_crossword_hints tool.
+const SYSTEM_INSTRUCTION = `You are a warm, encouraging crossword coach helping someone LEARN to solve NYT-style crosswords, not just get the answer. You will be given a clue and its correct answer (ground truth, already verified). Produce exactly 3 progressively revealing hints plus a short post-solve explanation, matching the given JSON schema.
 
 Rules for the 3 hints:
 - Hint 1 (gentle nudge): point at the category, topic, or clue-type (e.g. "this is a fill-in-the-blank" or "think about 1980s sitcoms") without giving synonyms of the answer or any letters.
@@ -76,25 +59,41 @@ Rules for the 3 hints:
 - Never include the literal answer word in hints 1 or 2.
 - Keep each hint to one short sentence (plus the optional reference sentence).
 
-The "explanation" field is shown only after the solver reveals or solves the answer — briefly explain the wordplay/reasoning and reference in 1-2 sentences, and it's fine to name the answer there.`,
-    tools: [HINT_TOOL],
-    tool_choice: { type: "tool", name: "provide_crossword_hints" },
-    messages: [
+The "explanation" field is shown only after the solver reveals or solves the answer — briefly explain the wordplay/reasoning and reference in 1-2 sentences, and it's fine to name the answer there.`;
+
+async function generate(
+  clue: string,
+  answer: string,
+  direction: Direction
+): Promise<HintBundle> {
+  const ai = getClient();
+
+  const response = await ai.models.generateContent({
+    model: "gemini-2.5-flash",
+    contents: [
       {
         role: "user",
-        content: `Clue (${direction}): "${clue}"\nAnswer length: ${answer.length}\nCorrect answer: ${answer}`,
+        parts: [
+          {
+            text: `Clue (${direction}): "${clue}"\nAnswer length: ${answer.length}\nCorrect answer: ${answer}`,
+          },
+        ],
       },
     ],
+    config: {
+      systemInstruction: SYSTEM_INSTRUCTION,
+      responseMimeType: "application/json",
+      responseSchema: RESPONSE_SCHEMA,
+      temperature: 0.4,
+    },
   });
 
-  const toolUse = message.content.find(
-    (block): block is Anthropic.ToolUseBlock => block.type === "tool_use"
-  );
-  if (!toolUse) {
+  const text = response.text;
+  if (!text) {
     throw new Error("Model did not return structured hints.");
   }
 
-  const input = toolUse.input as {
+  const input = JSON.parse(text) as {
     hints: { text: string; reference: string | null }[];
     explanation: string;
   };
