@@ -69,7 +69,7 @@ export function CrosswordGrid({
       style={{
         gridTemplateColumns: `repeat(${puzzle.cols}, minmax(0, 1fr))`,
         aspectRatio: `${puzzle.cols} / ${puzzle.rows}`,
-        maxWidth: "min(90vw, 520px)",
+        maxWidth: "min(94vw, 640px)",
       }}
     >
       {puzzle.cells.flatMap((row) =>
@@ -101,7 +101,7 @@ export function CrosswordGrid({
               }}
               onClick={() => onSelectCell(cell.row, cell.col)}
               onKeyDown={(e) => handleKeyDown(e, cell.row, cell.col)}
-              className={`relative flex items-center justify-center border border-neutral-300 dark:border-neutral-600 text-lg sm:text-xl font-medium aspect-square transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500 ${
+              className={`relative flex items-center justify-center border border-neutral-300 dark:border-neutral-600 text-xs sm:text-lg font-medium aspect-square transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500 ${
                 isSelected
                   ? "bg-amber-300 dark:bg-amber-400"
                   : isActive
