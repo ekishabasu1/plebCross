@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "PlebCross — Crossword Helper",
+  title: "WordWink — Crossword Helper",
   description: "A learn-as-you-solve NYT-style crossword with progressive hints.",
 };
 

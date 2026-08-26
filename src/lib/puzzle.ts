@@ -96,7 +96,7 @@ const DOWN_CLUES: Record<number, string> = {
   54: "Not wet; humorless, as wit",
 };
 
-export const PUZZLE_TITLE = "PlebCross Daily";
+export const PUZZLE_TITLE = "WordWink Daily";
 
 interface EntryFull extends PublicEntry {
   answer: string;
