@@ -24,11 +24,17 @@ interface HintPanelProps {
 
 const dirLabel: Record<Direction, string> = { across: "Across", down: "Down" };
 
+const HINT_BADGE_GRADIENT = [
+  "from-indigo-500 to-violet-500",
+  "from-violet-500 to-fuchsia-500",
+  "from-fuchsia-500 to-pink-500",
+];
+
 export function HintPanel({ entry, state, onRequestHints, onShowNext, onReveal }: HintPanelProps) {
   if (!entry) {
     return (
-      <div className="rounded-lg border border-dashed border-neutral-300 dark:border-neutral-700 p-4 text-sm text-neutral-500 dark:text-neutral-400 text-center">
-        Click a clue to get started.
+      <div className="rounded-2xl border border-dashed border-violet-300 dark:border-violet-800 p-4 text-sm text-neutral-500 dark:text-neutral-400 text-center">
+        👋 Click a clue to get started.
       </div>
     );
   }
@@ -37,9 +43,9 @@ export function HintPanel({ entry, state, onRequestHints, onShowNext, onReveal }
   const revealedCount = state?.revealedCount ?? 0;
 
   return (
-    <div className="rounded-lg border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 shadow-sm overflow-hidden">
-      <div className="px-4 py-3 bg-neutral-50 dark:bg-neutral-800 border-b border-neutral-200 dark:border-neutral-700">
-        <p className="text-xs font-medium text-neutral-500 dark:text-neutral-400">
+    <div className="rounded-2xl border border-violet-100 dark:border-violet-900 bg-white dark:bg-neutral-900 shadow-md overflow-hidden">
+      <div className="px-4 py-3 bg-gradient-to-r from-violet-50 to-fuchsia-50 dark:from-violet-950/60 dark:to-fuchsia-950/60 border-b border-violet-100 dark:border-violet-900">
+        <p className="text-xs font-semibold text-violet-600 dark:text-violet-400">
           {entry.number} {dirLabel[entry.direction]} · {entry.length} letters
         </p>
         <p className="text-sm font-medium text-neutral-900 dark:text-neutral-100 mt-0.5">
@@ -49,18 +55,20 @@ export function HintPanel({ entry, state, onRequestHints, onShowNext, onReveal }
 
       <div className="p-4 space-y-3">
         {!hints && !state?.loading && (
-          <button
+          <motion.button
             type="button"
             onClick={onRequestHints}
-            className="w-full rounded-md bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium py-2 transition-colors"
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.97 }}
+            className="w-full rounded-full bg-gradient-to-r from-indigo-500 via-violet-500 to-fuchsia-500 text-white text-sm font-semibold py-2.5 shadow-md shadow-violet-500/30"
           >
             💡 Get a hint
-          </button>
+          </motion.button>
         )}
 
         {state?.loading && (
           <div className="flex items-center justify-center gap-2 py-3 text-sm text-neutral-500 dark:text-neutral-400">
-            <span className="h-4 w-4 rounded-full border-2 border-neutral-300 border-t-blue-600 animate-spin" />
+            <span className="h-4 w-4 rounded-full border-2 border-violet-200 border-t-violet-600 animate-spin" />
             Thinking of a good hint…
           </div>
         )}
@@ -74,14 +82,21 @@ export function HintPanel({ entry, state, onRequestHints, onShowNext, onReveal }
             hints.slice(0, revealedCount).map((hint, i) => (
               <motion.div
                 key={i}
-                initial={{ opacity: 0, y: 8, height: 0 }}
-                animate={{ opacity: 1, y: 0, height: "auto" }}
-                transition={{ duration: 0.25, ease: "easeOut" }}
-                className="rounded-md bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 p-3"
+                initial={{ opacity: 0, y: 8, height: 0, scale: 0.97 }}
+                animate={{ opacity: 1, y: 0, height: "auto", scale: 1 }}
+                transition={{ duration: 0.28, ease: "easeOut" }}
+                className="rounded-xl bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 p-3"
               >
-                <p className="text-xs font-semibold text-blue-700 dark:text-blue-400 mb-1">
-                  Hint {i + 1}
-                </p>
+                <div className="flex items-center gap-2 mb-1.5">
+                  <span
+                    className={`inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-gradient-to-br ${HINT_BADGE_GRADIENT[i % 3]} text-white text-[11px] font-bold`}
+                  >
+                    {i + 1}
+                  </span>
+                  <p className="text-xs font-semibold text-neutral-500 dark:text-neutral-400">
+                    Hint {i + 1}
+                  </p>
+                </div>
                 <p className="text-sm text-neutral-800 dark:text-neutral-200">{hint.text}</p>
                 {hint.reference && (
                   <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-1.5 italic border-t border-neutral-200 dark:border-neutral-700 pt-1.5">
@@ -93,13 +108,15 @@ export function HintPanel({ entry, state, onRequestHints, onShowNext, onReveal }
         </AnimatePresence>
 
         {hints && revealedCount < hints.length && (
-          <button
+          <motion.button
             type="button"
             onClick={onShowNext}
-            className="w-full rounded-md border border-blue-600 text-blue-700 dark:text-blue-400 text-sm font-medium py-2 hover:bg-blue-50 dark:hover:bg-blue-950 transition-colors"
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.97 }}
+            className="w-full rounded-full border-2 border-violet-400 dark:border-violet-600 text-violet-700 dark:text-violet-400 text-sm font-semibold py-2 hover:bg-violet-50 dark:hover:bg-violet-950 transition-colors"
           >
             Show hint {revealedCount + 1}
-          </button>
+          </motion.button>
         )}
 
         {hints && (
@@ -114,18 +131,18 @@ export function HintPanel({ entry, state, onRequestHints, onShowNext, onReveal }
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  className="w-full mt-3 rounded-md text-sm font-medium py-2 text-neutral-600 dark:text-neutral-400 hover:text-red-600 dark:hover:text-red-400 disabled:opacity-50 transition-colors"
+                  className="w-full mt-3 rounded-md text-sm font-medium py-2 text-neutral-500 dark:text-neutral-400 hover:text-orange-600 dark:hover:text-orange-400 disabled:opacity-50 transition-colors"
                 >
-                  {state?.revealLoading ? "Revealing…" : "Reveal answer & explanation"}
+                  {state?.revealLoading ? "Revealing…" : "🔍 Reveal answer & explanation"}
                 </motion.button>
               ) : (
                 <motion.div
                   key="answer"
-                  initial={{ opacity: 0, y: 8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="mt-3 rounded-md bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900 p-3"
+                  initial={{ opacity: 0, y: 8, scale: 0.96 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  className="mt-3 rounded-xl bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-950/40 dark:to-orange-950/40 border border-orange-200 dark:border-orange-900 p-3"
                 >
-                  <p className="text-sm font-semibold text-red-700 dark:text-red-400">
+                  <p className="text-sm font-bold tracking-wide text-orange-700 dark:text-orange-400">
                     {state.answer}
                   </p>
                   <p className="text-xs text-neutral-600 dark:text-neutral-400 mt-1">

@@ -65,7 +65,7 @@ export function CrosswordGrid({
 
   return (
     <div
-      className="grid select-none rounded-md overflow-hidden border-2 border-neutral-800 dark:border-neutral-300 shadow-sm mx-auto"
+      className="grid select-none rounded-xl overflow-hidden border-2 border-violet-900 dark:border-violet-300 shadow-lg mx-auto"
       style={{
         gridTemplateColumns: `repeat(${puzzle.cols}, minmax(0, 1fr))`,
         aspectRatio: `${puzzle.cols} / ${puzzle.rows}`,
@@ -79,7 +79,7 @@ export function CrosswordGrid({
             return (
               <div
                 key={key}
-                className="bg-neutral-900 dark:bg-black border border-neutral-700"
+                className="bg-gradient-to-br from-neutral-900 to-violet-950 dark:from-black dark:to-violet-950 border border-neutral-700"
               />
             );
           }
@@ -101,12 +101,14 @@ export function CrosswordGrid({
               }}
               onClick={() => onSelectCell(cell.row, cell.col)}
               onKeyDown={(e) => handleKeyDown(e, cell.row, cell.col)}
-              className={`relative flex items-center justify-center border border-neutral-300 dark:border-neutral-600 text-xs sm:text-lg font-medium aspect-square transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500 ${
+              className={`relative flex items-center justify-center border border-neutral-300 dark:border-neutral-600 text-xs sm:text-lg font-semibold aspect-square transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-violet-500 ${
+                isWrong ? "animate-shake" : ""
+              } ${
                 isSelected
-                  ? "bg-amber-300 dark:bg-amber-400"
+                  ? "bg-gradient-to-br from-amber-300 to-orange-400 dark:from-amber-400 dark:to-orange-500 shadow-[0_0_0_2px_rgba(251,146,60,0.5)] scale-[1.04] z-10"
                   : isActive
-                  ? "bg-sky-100 dark:bg-sky-900"
-                  : "bg-white dark:bg-neutral-950"
+                  ? "bg-gradient-to-br from-violet-100 to-fuchsia-100 dark:from-violet-950 dark:to-fuchsia-950"
+                  : "bg-white dark:bg-neutral-950 hover:bg-violet-50 dark:hover:bg-violet-950/40"
               }`}
             >
               {cell.number !== null && (
@@ -115,13 +117,14 @@ export function CrosswordGrid({
                 </span>
               )}
               <span
-                className={
+                key={letter || "empty"}
+                className={`${letter ? "animate-pop-in" : ""} ${
                   isWrong
                     ? "text-red-600 dark:text-red-400"
                     : isRevealed
                     ? "text-red-600 dark:text-red-400"
                     : "text-neutral-900 dark:text-neutral-100"
-                }
+                }`}
               >
                 {letter}
               </span>

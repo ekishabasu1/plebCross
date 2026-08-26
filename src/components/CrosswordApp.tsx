@@ -1,6 +1,8 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import confetti from "canvas-confetti";
+import { AnimatePresence, motion } from "framer-motion";
 import type { Direction, Hint, PublicEntry, PublicPuzzle } from "@/lib/types";
 import { cellKey, entryForCell, entryKey, findEntryAt } from "@/lib/grid-utils";
 import { CrosswordGrid } from "./CrosswordGrid";
@@ -26,6 +28,7 @@ export function CrosswordApp({ puzzle }: CrosswordAppProps) {
   const [revealedCells, setRevealedCells] = useState<Set<string>>(new Set());
   const [wrongCells, setWrongCells] = useState<Set<string>>(new Set());
   const [mobileTab, setMobileTab] = useState<Direction>("across");
+  const [solved, setSolved] = useState(false);
 
   const acrossEntries = useMemo(
     () => puzzle.entries.filter((e) => e.direction === "across"),
@@ -56,6 +59,60 @@ export function CrosswordApp({ puzzle }: CrosswordAppProps) {
     }
     return s;
   }, [puzzle, values]);
+
+  const isGridFull = useMemo(
+    () => puzzle.cells.every((row, r) => row.every((cell, c) => cell.block || values[r][c].trim() !== "")),
+    [puzzle, values]
+  );
+
+  useEffect(() => {
+    if (!isGridFull || solved) return;
+    let cancelled = false;
+
+    async function checkWholeGrid() {
+      const entries = puzzle.entries.map((entry) => ({
+        number: entry.number,
+        direction: entry.direction,
+        guess: entry.cells.map(([r, c]) => values[r][c]).join(""),
+      }));
+      const res = await fetch("/api/check", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ entries }),
+      });
+      if (!res.ok || cancelled) return;
+      const data = await res.json();
+      const allCorrect = (data.results ?? []).every((r: { correct: boolean }) => r.correct);
+      if (allCorrect && !cancelled) {
+        setSolved(true);
+        const duration = 1500;
+        const end = Date.now() + duration;
+        (function frame() {
+          confetti({
+            particleCount: 3,
+            angle: 60,
+            spread: 60,
+            origin: { x: 0 },
+            colors: ["#8b5cf6", "#d946ef", "#f59e0b"],
+          });
+          confetti({
+            particleCount: 3,
+            angle: 120,
+            spread: 60,
+            origin: { x: 1 },
+            colors: ["#8b5cf6", "#d946ef", "#f59e0b"],
+          });
+          if (Date.now() < end) requestAnimationFrame(frame);
+        })();
+      }
+    }
+
+    checkWholeGrid();
+    return () => {
+      cancelled = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isGridFull]);
 
   function selectCell(row: number, col: number) {
     const cell = puzzle.cells[row][col];
@@ -280,9 +337,22 @@ export function CrosswordApp({ puzzle }: CrosswordAppProps) {
   return (
     <div className="max-w-5xl mx-auto px-4 py-6 grid gap-6 lg:grid-cols-[minmax(0,1fr)_360px]">
       <div className="space-y-4">
-        <div className="rounded-lg bg-neutral-100 dark:bg-neutral-800 px-4 py-2.5 flex items-center justify-between gap-3">
+        <AnimatePresence>
+          {solved && (
+            <motion.div
+              initial={{ opacity: 0, y: -12, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -12 }}
+              className="rounded-2xl bg-gradient-to-r from-indigo-500 via-violet-500 to-fuchsia-500 text-white px-4 py-3 shadow-lg shadow-violet-500/30 text-center font-semibold"
+            >
+              🎉 Solved it! Nice work.
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        <div className="rounded-2xl bg-white dark:bg-neutral-900 border border-violet-100 dark:border-violet-900 shadow-sm px-4 py-2.5 flex items-center justify-between gap-3">
           <div className="min-w-0">
-            <p className="text-xs font-medium text-neutral-500 dark:text-neutral-400">
+            <p className="text-xs font-semibold text-violet-600 dark:text-violet-400">
               {activeEntry ? `${activeEntry.number} ${activeEntry.direction === "across" ? "Across" : "Down"}` : "—"}
             </p>
             <p className="text-sm font-medium text-neutral-900 dark:text-neutral-100 truncate">
@@ -290,14 +360,16 @@ export function CrosswordApp({ puzzle }: CrosswordAppProps) {
             </p>
           </div>
           <div className="flex gap-2 shrink-0">
-            <button
+            <motion.button
               type="button"
               onClick={checkCurrentWord}
               disabled={!activeEntry}
-              className="text-xs font-medium px-2.5 py-1.5 rounded-md border border-neutral-300 dark:border-neutral-600 hover:bg-neutral-200 dark:hover:bg-neutral-700 disabled:opacity-40 transition-colors"
+              whileHover={{ scale: activeEntry ? 1.04 : 1 }}
+              whileTap={{ scale: activeEntry ? 0.96 : 1 }}
+              className="text-xs font-semibold px-3 py-1.5 rounded-full bg-gradient-to-r from-violet-500 to-fuchsia-500 text-white shadow-sm shadow-violet-500/30 disabled:opacity-30 disabled:shadow-none transition-opacity"
             >
-              Check
-            </button>
+              ✓ Check
+            </motion.button>
           </div>
         </div>
 
@@ -326,16 +398,16 @@ export function CrosswordApp({ puzzle }: CrosswordAppProps) {
           />
         </div>
 
-        <div className="lg:hidden rounded-lg border border-neutral-200 dark:border-neutral-700 overflow-hidden">
-          <div className="flex border-b border-neutral-200 dark:border-neutral-700">
+        <div className="lg:hidden rounded-2xl border border-violet-100 dark:border-violet-900 overflow-hidden shadow-sm">
+          <div className="flex border-b border-violet-100 dark:border-violet-900">
             {listsToShow.map((l) => (
               <button
                 key={l.key}
                 type="button"
                 onClick={() => setMobileTab(l.key)}
-                className={`flex-1 py-2 text-sm font-medium transition-colors ${
+                className={`flex-1 py-2 text-sm font-semibold transition-colors ${
                   mobileTab === l.key
-                    ? "bg-neutral-100 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100"
+                    ? "bg-gradient-to-r from-violet-100 to-fuchsia-50 dark:from-violet-900 dark:to-fuchsia-950 text-violet-700 dark:text-violet-300"
                     : "text-neutral-500 dark:text-neutral-400"
                 }`}
               >
@@ -364,7 +436,7 @@ export function CrosswordApp({ puzzle }: CrosswordAppProps) {
           onShowNext={() => activeEntry && showNextHint(activeEntry)}
           onReveal={() => activeEntry && revealAnswer(activeEntry)}
         />
-        <div className="rounded-lg border border-neutral-200 dark:border-neutral-700 flex divide-x divide-neutral-200 dark:divide-neutral-700 overflow-hidden max-h-[420px]">
+        <div className="rounded-2xl border border-violet-100 dark:border-violet-900 shadow-sm flex divide-x divide-violet-100 dark:divide-violet-900 overflow-hidden max-h-[420px]">
           <div className="flex-1 overflow-y-auto">
             <ClueList
               title="Across"
