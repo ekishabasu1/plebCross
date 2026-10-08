@@ -14,7 +14,7 @@ interface ClueListProps {
 export function ClueList({ title, entries, activeKey, solvedKeys, onSelect }: ClueListProps) {
   return (
     <div className="flex-1 min-w-0">
-      <h3 className="text-xs font-semibold uppercase tracking-wide text-neutral-500 dark:text-neutral-400 px-3 py-2 sticky top-0 bg-white/90 dark:bg-neutral-950/90 backdrop-blur">
+      <h3 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground px-3 py-2 sticky top-0 bg-card/90 backdrop-blur">
         {title}
       </h3>
       <ul className="space-y-0.5">
@@ -29,11 +29,11 @@ export function ClueList({ title, entries, activeKey, solvedKeys, onSelect }: Cl
                 onClick={() => onSelect(entry)}
                 className={`w-full text-left px-3 py-1.5 rounded-lg text-sm transition-all duration-150 flex gap-2 border-l-4 ${
                   isActive
-                    ? "border-teal-300 bg-gradient-to-r from-teal-100 to-pink-50 dark:from-teal-900 dark:to-sky-950 text-neutral-900 dark:text-neutral-50"
-                    : "border-transparent hover:bg-teal-50 dark:hover:bg-teal-950/40 hover:border-teal-100 dark:hover:border-teal-800 text-neutral-700 dark:text-neutral-300"
+                    ? "border-primary bg-accent text-foreground"
+                    : "border-transparent hover:bg-accent/60 hover:border-border text-muted-foreground"
                 } ${isSolved ? "line-through decoration-2 opacity-50" : ""}`}
               >
-                <span className={`font-semibold shrink-0 w-5 text-right ${isActive ? "text-teal-600 dark:text-teal-400" : ""}`}>
+                <span className={`font-semibold shrink-0 w-5 text-right ${isActive ? "text-primary" : ""}`}>
                   {entry.number}
                 </span>
                 <span className="min-w-0 break-words">{entry.clue}</span>

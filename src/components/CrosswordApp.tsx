@@ -8,6 +8,8 @@ import { cellKey, entryForCell, entryKey, findEntryAt } from "@/lib/grid-utils";
 import { CrosswordGrid } from "./CrosswordGrid";
 import { ClueList } from "./ClueList";
 import { HintPanel, type HintState } from "./HintPanel";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 
 interface CrosswordAppProps {
   puzzle: PublicPuzzle;
@@ -93,14 +95,14 @@ export function CrosswordApp({ puzzle }: CrosswordAppProps) {
             angle: 60,
             spread: 60,
             origin: { x: 0 },
-            colors: ["#f9a8d4", "#5eead4", "#a5f3fc", "#fde68a"],
+            colors: ["#fb923c", "#4ade80", "#facc15"],
           });
           confetti({
             particleCount: 3,
             angle: 120,
             spread: 60,
             origin: { x: 1 },
-            colors: ["#f9a8d4", "#5eead4", "#a5f3fc", "#fde68a"],
+            colors: ["#fb923c", "#4ade80", "#facc15"],
           });
           if (Date.now() < end) requestAnimationFrame(frame);
         })();
@@ -343,35 +345,38 @@ export function CrosswordApp({ puzzle }: CrosswordAppProps) {
               initial={{ opacity: 0, y: -12, scale: 0.95 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: -12 }}
-              className="rounded-2xl bg-gradient-to-r from-pink-200 via-teal-200 to-sky-200 text-neutral-800 px-4 py-3 shadow-md shadow-teal-200/50 text-center font-semibold"
+              className="rounded-2xl bg-success text-success-foreground px-4 py-3 shadow-md text-center font-semibold"
             >
               🎉 Solved it! Nice work.
             </motion.div>
           )}
         </AnimatePresence>
 
-        <div className="rounded-2xl bg-white dark:bg-neutral-900 border border-teal-100 dark:border-teal-900 shadow-sm px-4 py-2.5 flex items-center justify-between gap-3">
+        <Card className="px-4 py-2.5 flex-row items-center justify-between gap-3 shadow-sm">
           <div className="min-w-0">
-            <p className="text-xs font-semibold text-teal-600 dark:text-teal-400">
+            <p className="text-xs font-semibold text-primary">
               {activeEntry ? `${activeEntry.number} ${activeEntry.direction === "across" ? "Across" : "Down"}` : "—"}
             </p>
-            <p className="text-sm font-medium text-neutral-900 dark:text-neutral-100 truncate">
+            <p className="text-sm font-medium text-foreground truncate">
               {activeEntry?.clue ?? "Select a clue to begin"}
             </p>
           </div>
           <div className="flex gap-2 shrink-0">
-            <motion.button
-              type="button"
-              onClick={checkCurrentWord}
-              disabled={!activeEntry}
+            <motion.div
               whileHover={{ scale: activeEntry ? 1.04 : 1 }}
               whileTap={{ scale: activeEntry ? 0.96 : 1 }}
-              className="text-xs font-semibold px-3 py-1.5 rounded-full bg-gradient-to-r from-teal-200 to-sky-200 text-neutral-800 shadow-sm shadow-teal-200/50 disabled:opacity-30 disabled:shadow-none transition-opacity"
             >
-              ✓ Check
-            </motion.button>
+              <Button
+                onClick={checkCurrentWord}
+                disabled={!activeEntry}
+                size="sm"
+                className="rounded-full"
+              >
+                ✓ Check
+              </Button>
+            </motion.div>
           </div>
-        </div>
+        </Card>
 
         <CrosswordGrid
           puzzle={puzzle}
@@ -398,8 +403,8 @@ export function CrosswordApp({ puzzle }: CrosswordAppProps) {
           />
         </div>
 
-        <div className="lg:hidden rounded-2xl border border-teal-100 dark:border-teal-900 overflow-hidden shadow-sm">
-          <div className="flex border-b border-teal-100 dark:border-teal-900">
+        <div className="lg:hidden rounded-2xl border overflow-hidden shadow-sm">
+          <div className="flex border-b">
             {listsToShow.map((l) => (
               <button
                 key={l.key}
@@ -407,8 +412,8 @@ export function CrosswordApp({ puzzle }: CrosswordAppProps) {
                 onClick={() => setMobileTab(l.key)}
                 className={`flex-1 py-2 text-sm font-semibold transition-colors ${
                   mobileTab === l.key
-                    ? "bg-gradient-to-r from-teal-100 to-pink-50 dark:from-teal-900 dark:to-sky-950 text-teal-600 dark:text-teal-300"
-                    : "text-neutral-500 dark:text-neutral-400"
+                    ? "bg-accent text-primary"
+                    : "text-muted-foreground"
                 }`}
               >
                 {l.title}
@@ -436,7 +441,7 @@ export function CrosswordApp({ puzzle }: CrosswordAppProps) {
           onShowNext={() => activeEntry && showNextHint(activeEntry)}
           onReveal={() => activeEntry && revealAnswer(activeEntry)}
         />
-        <div className="rounded-2xl border border-teal-100 dark:border-teal-900 shadow-sm flex divide-x divide-teal-100 dark:divide-teal-900 overflow-hidden max-h-[420px]">
+        <div className="rounded-2xl border shadow-sm flex divide-x overflow-hidden max-h-[420px]">
           <div className="flex-1 overflow-y-auto">
             <ClueList
               title="Across"
