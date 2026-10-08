@@ -29,11 +29,11 @@ export function ClueList({ title, entries, activeKey, solvedKeys, onSelect }: Cl
                 onClick={() => onSelect(entry)}
                 className={`w-full text-left px-3 py-1.5 rounded-lg text-sm transition-all duration-150 flex gap-2 border-l-4 ${
                   isActive
-                    ? "border-purple-300 bg-gradient-to-r from-purple-100 to-pink-50 dark:from-violet-900 dark:to-fuchsia-950 text-neutral-900 dark:text-neutral-50"
-                    : "border-transparent hover:bg-purple-50 dark:hover:bg-violet-950/40 hover:border-purple-100 dark:hover:border-violet-800 text-neutral-700 dark:text-neutral-300"
+                    ? "border-teal-300 bg-gradient-to-r from-teal-100 to-pink-50 dark:from-teal-900 dark:to-sky-950 text-neutral-900 dark:text-neutral-50"
+                    : "border-transparent hover:bg-teal-50 dark:hover:bg-teal-950/40 hover:border-teal-100 dark:hover:border-teal-800 text-neutral-700 dark:text-neutral-300"
                 } ${isSolved ? "line-through decoration-2 opacity-50" : ""}`}
               >
-                <span className={`font-semibold shrink-0 w-5 text-right ${isActive ? "text-purple-500 dark:text-violet-400" : ""}`}>
+                <span className={`font-semibold shrink-0 w-5 text-right ${isActive ? "text-teal-600 dark:text-teal-400" : ""}`}>
                   {entry.number}
                 </span>
                 <span className="min-w-0 break-words">{entry.clue}</span>

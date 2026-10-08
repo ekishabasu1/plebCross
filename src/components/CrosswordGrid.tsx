@@ -65,7 +65,7 @@ export function CrosswordGrid({
 
   return (
     <div
-      className="grid select-none rounded-xl overflow-hidden border-2 border-purple-300 dark:border-purple-400 shadow-lg mx-auto"
+      className="grid select-none rounded-xl overflow-hidden border-2 border-teal-300 dark:border-teal-400 shadow-lg mx-auto"
       style={{
         gridTemplateColumns: `repeat(${puzzle.cols}, minmax(0, 1fr))`,
         aspectRatio: `${puzzle.cols} / ${puzzle.rows}`,
@@ -79,7 +79,7 @@ export function CrosswordGrid({
             return (
               <div
                 key={key}
-                className="bg-gradient-to-br from-slate-300 to-purple-300 dark:from-neutral-800 dark:to-purple-900 border border-neutral-300/50"
+                className="bg-gradient-to-br from-slate-300 to-teal-300 dark:from-neutral-800 dark:to-teal-900 border border-neutral-300/50"
               />
             );
           }
@@ -101,14 +101,14 @@ export function CrosswordGrid({
               }}
               onClick={() => onSelectCell(cell.row, cell.col)}
               onKeyDown={(e) => handleKeyDown(e, cell.row, cell.col)}
-              className={`relative flex items-center justify-center border border-neutral-300 dark:border-neutral-600 text-xs sm:text-lg font-semibold aspect-square transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-purple-300 ${
+              className={`relative flex items-center justify-center border border-neutral-300 dark:border-neutral-600 text-xs sm:text-lg font-semibold aspect-square transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-teal-300 ${
                 isWrong ? "animate-shake" : ""
               } ${
                 isSelected
                   ? "bg-gradient-to-br from-amber-200 to-orange-200 dark:from-amber-300 dark:to-orange-300 shadow-[0_0_0_2px_rgba(253,186,116,0.6)] scale-[1.04] z-10"
                   : isActive
-                  ? "bg-gradient-to-br from-violet-100 to-pink-100 dark:from-violet-950 dark:to-pink-950"
-                  : "bg-white dark:bg-neutral-950 hover:bg-violet-50 dark:hover:bg-violet-950/40"
+                  ? "bg-gradient-to-br from-teal-100 to-pink-100 dark:from-teal-950 dark:to-pink-950"
+                  : "bg-white dark:bg-neutral-950 hover:bg-teal-50 dark:hover:bg-teal-950/40"
               }`}
             >
               {cell.number !== null && (

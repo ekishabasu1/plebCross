@@ -25,15 +25,15 @@ interface HintPanelProps {
 const dirLabel: Record<Direction, string> = { across: "Across", down: "Down" };
 
 const HINT_BADGE_GRADIENT = [
-  "from-pink-200 to-purple-200",
-  "from-purple-200 to-sky-200",
-  "from-sky-200 to-teal-200",
+  "from-pink-200 to-teal-200",
+  "from-teal-200 to-sky-200",
+  "from-sky-200 to-amber-200",
 ];
 
 export function HintPanel({ entry, state, onRequestHints, onShowNext, onReveal }: HintPanelProps) {
   if (!entry) {
     return (
-      <div className="rounded-2xl border border-dashed border-purple-200 dark:border-violet-800 p-4 text-sm text-neutral-500 dark:text-neutral-400 text-center">
+      <div className="rounded-2xl border border-dashed border-teal-200 dark:border-teal-800 p-4 text-sm text-neutral-500 dark:text-neutral-400 text-center">
         👋 Click a clue to get started.
       </div>
     );
@@ -43,9 +43,9 @@ export function HintPanel({ entry, state, onRequestHints, onShowNext, onReveal }
   const revealedCount = state?.revealedCount ?? 0;
 
   return (
-    <div className="rounded-2xl border border-purple-100 dark:border-violet-900 bg-white dark:bg-neutral-900 shadow-md overflow-hidden">
-      <div className="px-4 py-3 bg-gradient-to-r from-pink-50 to-sky-50 dark:from-violet-950/60 dark:to-fuchsia-950/60 border-b border-purple-100 dark:border-violet-900">
-        <p className="text-xs font-semibold text-purple-500 dark:text-violet-400">
+    <div className="rounded-2xl border border-teal-100 dark:border-teal-900 bg-white dark:bg-neutral-900 shadow-md overflow-hidden">
+      <div className="px-4 py-3 bg-gradient-to-r from-pink-50 to-sky-50 dark:from-teal-950/60 dark:to-sky-950/60 border-b border-teal-100 dark:border-teal-900">
+        <p className="text-xs font-semibold text-teal-600 dark:text-teal-400">
           {entry.number} {dirLabel[entry.direction]} · {entry.length} letters
         </p>
         <p className="text-sm font-medium text-neutral-900 dark:text-neutral-100 mt-0.5">
@@ -60,7 +60,7 @@ export function HintPanel({ entry, state, onRequestHints, onShowNext, onReveal }
             onClick={onRequestHints}
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.97 }}
-            className="w-full rounded-full bg-gradient-to-r from-pink-200 via-purple-200 to-sky-200 text-neutral-800 text-sm font-semibold py-2.5 shadow-md shadow-purple-200/50"
+            className="w-full rounded-full bg-gradient-to-r from-pink-200 via-teal-200 to-sky-200 text-neutral-800 text-sm font-semibold py-2.5 shadow-md shadow-teal-200/50"
           >
             💡 Get a hint
           </motion.button>
@@ -68,7 +68,7 @@ export function HintPanel({ entry, state, onRequestHints, onShowNext, onReveal }
 
         {state?.loading && (
           <div className="flex items-center justify-center gap-2 py-3 text-sm text-neutral-500 dark:text-neutral-400">
-            <span className="h-4 w-4 rounded-full border-2 border-purple-100 border-t-purple-400 animate-spin" />
+            <span className="h-4 w-4 rounded-full border-2 border-teal-100 border-t-teal-400 animate-spin" />
             Thinking of a good hint…
           </div>
         )}
@@ -113,7 +113,7 @@ export function HintPanel({ entry, state, onRequestHints, onShowNext, onReveal }
             onClick={onShowNext}
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.97 }}
-            className="w-full rounded-full border-2 border-purple-200 dark:border-violet-600 text-purple-500 dark:text-violet-400 text-sm font-semibold py-2 hover:bg-purple-50 dark:hover:bg-violet-950 transition-colors"
+            className="w-full rounded-full border-2 border-teal-200 dark:border-teal-600 text-teal-600 dark:text-teal-400 text-sm font-semibold py-2 hover:bg-teal-50 dark:hover:bg-teal-950 transition-colors"
           >
             Show hint {revealedCount + 1}
           </motion.button>
