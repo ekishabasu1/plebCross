@@ -7,17 +7,11 @@ export default function Home() {
   return (
     <div className="min-h-full flex flex-col bg-background">
       <header className="border-b-4 border-foreground bg-primary">
-        <div className="max-w-5xl mx-auto px-4 py-4 flex items-baseline gap-3">
-          <h1 className="text-2xl font-black tracking-tight flex items-center gap-2 text-primary-foreground">
-            <span
-              aria-hidden
-              className="inline-flex h-9 w-9 items-center justify-center rounded-full border-2 border-foreground bg-success text-lg shadow-brutal-sm"
-            >
-              😉
-            </span>
+        <div className="max-w-5xl mx-auto px-4 py-5 sm:py-6">
+          <h1 className="font-display text-3xl sm:text-4xl tracking-tight leading-none text-primary-foreground">
             WORDWINK
           </h1>
-          <p className="text-xs font-bold text-primary-foreground/80">
+          <p className="mt-1.5 text-xs sm:text-sm font-bold text-primary-foreground/75">
             {PUZZLE_TITLE} · click a clue for hints
           </p>
         </div>

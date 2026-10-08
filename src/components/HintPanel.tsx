@@ -1,6 +1,7 @@
 "use client";
 
 import { AnimatePresence, motion } from "framer-motion";
+import { BookOpen, Eye, Lightbulb } from "lucide-react";
 import type { Direction, Hint, PublicEntry } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -38,7 +39,7 @@ export function HintPanel({ entry, state, onRequestHints, onShowNext, onReveal }
     return (
       <Card className="border-dashed py-4 shadow-none">
         <CardContent className="text-sm text-muted-foreground text-center">
-          👋 Click a clue to get started.
+          Click a clue to get started.
         </CardContent>
       </Card>
     );
@@ -59,7 +60,7 @@ export function HintPanel({ entry, state, onRequestHints, onShowNext, onReveal }
       <CardContent className="p-4 space-y-3">
         {!hints && !state?.loading && (
           <Button onClick={onRequestHints} className="w-full" size="lg">
-            💡 Get a hint
+            <Lightbulb /> Get a hint
           </Button>
         )}
 
@@ -93,8 +94,9 @@ export function HintPanel({ entry, state, onRequestHints, onShowNext, onReveal }
                 </div>
                 <p className="text-sm text-foreground">{hint.text}</p>
                 {hint.reference && (
-                  <p className="text-xs text-muted-foreground mt-1.5 italic border-t-2 border-foreground/20 pt-1.5">
-                    📚 {hint.reference}
+                  <p className="text-xs text-muted-foreground mt-1.5 italic border-t-2 border-foreground/20 pt-1.5 flex items-start gap-1">
+                    <BookOpen className="size-3.5 shrink-0 mt-0.5" />
+                    {hint.reference}
                   </p>
                 )}
               </motion.div>
@@ -123,7 +125,13 @@ export function HintPanel({ entry, state, onRequestHints, onShowNext, onReveal }
                     variant="ghost"
                     className="w-full mt-3 text-muted-foreground hover:text-destructive"
                   >
-                    {state?.revealLoading ? "Revealing…" : "🔍 Reveal answer & explanation"}
+                    {state?.revealLoading ? (
+                      "Revealing…"
+                    ) : (
+                      <>
+                        <Eye /> Reveal answer & explanation
+                      </>
+                    )}
                   </Button>
                 </motion.div>
               ) : (

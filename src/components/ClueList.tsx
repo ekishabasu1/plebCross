@@ -1,5 +1,6 @@
 "use client";
 
+import { Check } from "lucide-react";
 import type { Direction, PublicEntry } from "@/lib/types";
 import { entryKey } from "@/lib/grid-utils";
 
@@ -35,7 +36,7 @@ export function ClueList({ title, entries, activeKey, solvedKeys, onSelect }: Cl
               >
                 <span className="font-black shrink-0 w-5 text-right">{entry.number}</span>
                 <span className="min-w-0 break-words">{entry.clue}</span>
-                {isSolved && <span className="ml-auto shrink-0">✅</span>}
+                {isSolved && <Check className="size-4 ml-auto shrink-0" />}
               </button>
             </li>
           );

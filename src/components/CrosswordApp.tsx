@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import confetti from "canvas-confetti";
 import { AnimatePresence, motion } from "framer-motion";
+import { Check, PartyPopper } from "lucide-react";
 import type { Direction, Hint, PublicEntry, PublicPuzzle } from "@/lib/types";
 import { cellKey, entryForCell, entryKey, findEntryAt } from "@/lib/grid-utils";
 import { CrosswordGrid } from "./CrosswordGrid";
@@ -345,9 +346,9 @@ export function CrosswordApp({ puzzle }: CrosswordAppProps) {
               initial={{ opacity: 0, y: -12, scale: 0.95 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: -12 }}
-              className="rounded-xl bg-success text-success-foreground px-4 py-3 border-2 border-foreground shadow-brutal text-center font-black"
+              className="rounded-xl bg-success text-success-foreground px-4 py-3 border-2 border-foreground shadow-brutal text-center font-black flex items-center justify-center gap-2"
             >
-              🎉 Solved it! Nice work.
+              <PartyPopper className="size-5" /> Solved it! Nice work.
             </motion.div>
           )}
         </AnimatePresence>
@@ -363,7 +364,7 @@ export function CrosswordApp({ puzzle }: CrosswordAppProps) {
           </div>
           <div className="flex gap-2 shrink-0">
             <Button onClick={checkCurrentWord} disabled={!activeEntry} size="sm">
-              ✓ Check
+              <Check /> Check
             </Button>
           </div>
         </Card>
