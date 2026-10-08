@@ -1,6 +1,12 @@
 {
   "version": 1,
   "skills": {
+    "anti-ui-slop": {
+      "source": "uizze/uizze",
+      "sourceType": "github",
+      "skillPath": "skills/anti-ui-slop/SKILL.md",
+      "computedHash": "ef2b42a1b2b21836f6c8df084ee6397c38c209fdaaedfb40159d183d01269759"
+    },
     "frontend-design": {
       "source": "anthropics/skills",
       "sourceType": "github",
