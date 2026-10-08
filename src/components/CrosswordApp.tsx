@@ -95,14 +95,14 @@ export function CrosswordApp({ puzzle }: CrosswordAppProps) {
             angle: 60,
             spread: 60,
             origin: { x: 0 },
-            colors: ["#fb923c", "#4ade80", "#facc15"],
+            colors: ["#e8a628", "#4a8c82", "#d1663d", "#d98fa3"],
           });
           confetti({
             particleCount: 3,
             angle: 120,
             spread: 60,
             origin: { x: 1 },
-            colors: ["#fb923c", "#4ade80", "#facc15"],
+            colors: ["#e8a628", "#4a8c82", "#d1663d", "#d98fa3"],
           });
           if (Date.now() < end) requestAnimationFrame(frame);
         })();
@@ -345,36 +345,26 @@ export function CrosswordApp({ puzzle }: CrosswordAppProps) {
               initial={{ opacity: 0, y: -12, scale: 0.95 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: -12 }}
-              className="rounded-2xl bg-success text-success-foreground px-4 py-3 shadow-md text-center font-semibold"
+              className="rounded-xl bg-success text-success-foreground px-4 py-3 border-2 border-foreground shadow-brutal text-center font-black"
             >
               🎉 Solved it! Nice work.
             </motion.div>
           )}
         </AnimatePresence>
 
-        <Card className="px-4 py-2.5 flex-row items-center justify-between gap-3 shadow-sm">
+        <Card className="px-4 py-2.5 flex-row items-center justify-between gap-3">
           <div className="min-w-0">
-            <p className="text-xs font-semibold text-primary">
+            <p className="text-xs font-bold text-accent">
               {activeEntry ? `${activeEntry.number} ${activeEntry.direction === "across" ? "Across" : "Down"}` : "—"}
             </p>
-            <p className="text-sm font-medium text-foreground truncate">
+            <p className="text-sm font-bold text-foreground truncate">
               {activeEntry?.clue ?? "Select a clue to begin"}
             </p>
           </div>
           <div className="flex gap-2 shrink-0">
-            <motion.div
-              whileHover={{ scale: activeEntry ? 1.04 : 1 }}
-              whileTap={{ scale: activeEntry ? 0.96 : 1 }}
-            >
-              <Button
-                onClick={checkCurrentWord}
-                disabled={!activeEntry}
-                size="sm"
-                className="rounded-full"
-              >
-                ✓ Check
-              </Button>
-            </motion.div>
+            <Button onClick={checkCurrentWord} disabled={!activeEntry} size="sm">
+              ✓ Check
+            </Button>
           </div>
         </Card>
 
@@ -403,16 +393,16 @@ export function CrosswordApp({ puzzle }: CrosswordAppProps) {
           />
         </div>
 
-        <div className="lg:hidden rounded-2xl border overflow-hidden shadow-sm">
-          <div className="flex border-b">
+        <div className="lg:hidden rounded-xl border-2 border-foreground shadow-brutal overflow-hidden bg-card">
+          <div className="flex border-b-2 border-foreground">
             {listsToShow.map((l) => (
               <button
                 key={l.key}
                 type="button"
                 onClick={() => setMobileTab(l.key)}
-                className={`flex-1 py-2 text-sm font-semibold transition-colors ${
+                className={`flex-1 py-2 text-sm font-black transition-colors ${
                   mobileTab === l.key
-                    ? "bg-accent text-primary"
+                    ? "bg-primary text-primary-foreground"
                     : "text-muted-foreground"
                 }`}
               >
@@ -441,7 +431,7 @@ export function CrosswordApp({ puzzle }: CrosswordAppProps) {
           onShowNext={() => activeEntry && showNextHint(activeEntry)}
           onReveal={() => activeEntry && revealAnswer(activeEntry)}
         />
-        <div className="rounded-2xl border shadow-sm flex divide-x overflow-hidden max-h-[420px]">
+        <div className="rounded-xl border-2 border-foreground shadow-brutal bg-card flex divide-x-2 divide-foreground overflow-hidden max-h-[420px]">
           <div className="flex-1 overflow-y-auto">
             <ClueList
               title="Across"

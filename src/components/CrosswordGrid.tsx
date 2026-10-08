@@ -65,7 +65,7 @@ export function CrosswordGrid({
 
   return (
     <div
-      className="grid select-none rounded-xl overflow-hidden border-2 border-border shadow-lg mx-auto bg-card"
+      className="grid select-none rounded-xl overflow-hidden border-2 border-foreground shadow-brutal-lg mx-auto bg-card"
       style={{
         gridTemplateColumns: `repeat(${puzzle.cols}, minmax(0, 1fr))`,
         aspectRatio: `${puzzle.cols} / ${puzzle.rows}`,
@@ -77,7 +77,7 @@ export function CrosswordGrid({
           const key = cellKey(cell.row, cell.col);
           if (cell.block) {
             return (
-              <div key={key} className="bg-neutral-900 dark:bg-neutral-700 border border-border/50" />
+              <div key={key} className="bg-foreground border border-foreground/50" />
             );
           }
 
@@ -98,14 +98,14 @@ export function CrosswordGrid({
               }}
               onClick={() => onSelectCell(cell.row, cell.col)}
               onKeyDown={(e) => handleKeyDown(e, cell.row, cell.col)}
-              className={`relative flex items-center justify-center border border-border text-xs sm:text-lg font-semibold aspect-square transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-ring ${
+              className={`relative flex items-center justify-center border border-foreground/30 text-xs sm:text-lg font-black aspect-square transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-ring ${
                 isWrong ? "animate-shake" : ""
               } ${
                 isSelected
-                  ? "bg-primary/80 shadow-[0_0_0_2px_var(--primary)] scale-[1.04] z-10"
+                  ? "bg-primary shadow-[inset_0_0_0_2px_var(--foreground)] scale-[1.04] z-10"
                   : isActive
-                  ? "bg-accent"
-                  : "bg-card hover:bg-accent/60"
+                  ? "bg-secondary/30"
+                  : "bg-card hover:bg-secondary/15"
               }`}
             >
               {cell.number !== null && (

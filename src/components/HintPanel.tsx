@@ -27,10 +27,16 @@ interface HintPanelProps {
 
 const dirLabel: Record<Direction, string> = { across: "Across", down: "Down" };
 
+const HINT_BADGE_VARIANT: Array<"default" | "secondary" | "destructive"> = [
+  "default",
+  "secondary",
+  "destructive",
+];
+
 export function HintPanel({ entry, state, onRequestHints, onShowNext, onReveal }: HintPanelProps) {
   if (!entry) {
     return (
-      <Card className="border-dashed py-4">
+      <Card className="border-dashed py-4 shadow-none">
         <CardContent className="text-sm text-muted-foreground text-center">
           👋 Click a clue to get started.
         </CardContent>
@@ -43,20 +49,18 @@ export function HintPanel({ entry, state, onRequestHints, onShowNext, onReveal }
 
   return (
     <Card className="py-0 overflow-hidden gap-0">
-      <CardHeader className="px-4 py-3 bg-muted/60 border-b">
-        <p className="text-xs font-semibold text-primary">
+      <CardHeader className="px-4 py-3 bg-secondary border-b-2 border-foreground">
+        <p className="text-xs font-bold text-secondary-foreground">
           {entry.number} {dirLabel[entry.direction]} · {entry.length} letters
         </p>
-        <p className="text-sm font-medium text-foreground mt-0.5">{entry.clue}</p>
+        <p className="text-sm font-bold text-secondary-foreground mt-0.5">{entry.clue}</p>
       </CardHeader>
 
       <CardContent className="p-4 space-y-3">
         {!hints && !state?.loading && (
-          <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}>
-            <Button onClick={onRequestHints} className="w-full rounded-full" size="lg">
-              💡 Get a hint
-            </Button>
-          </motion.div>
+          <Button onClick={onRequestHints} className="w-full" size="lg">
+            💡 Get a hint
+          </Button>
         )}
 
         {state?.loading && (
@@ -76,15 +80,20 @@ export function HintPanel({ entry, state, onRequestHints, onShowNext, onReveal }
                 initial={{ opacity: 0, y: 8, height: 0, scale: 0.97 }}
                 animate={{ opacity: 1, y: 0, height: "auto", scale: 1 }}
                 transition={{ duration: 0.28, ease: "easeOut" }}
-                className="rounded-xl bg-muted/50 border p-3"
+                className="rounded-xl bg-card border-2 border-foreground shadow-brutal-sm p-3"
               >
                 <div className="flex items-center gap-2 mb-1.5">
-                  <Badge className="h-5 w-5 rounded-full p-0 justify-center">{i + 1}</Badge>
-                  <p className="text-xs font-semibold text-muted-foreground">Hint {i + 1}</p>
+                  <Badge
+                    variant={HINT_BADGE_VARIANT[i % 3]}
+                    className="h-5 w-5 rounded-full p-0 justify-center"
+                  >
+                    {i + 1}
+                  </Badge>
+                  <p className="text-xs font-bold text-muted-foreground">Hint {i + 1}</p>
                 </div>
                 <p className="text-sm text-foreground">{hint.text}</p>
                 {hint.reference && (
-                  <p className="text-xs text-muted-foreground mt-1.5 italic border-t pt-1.5">
+                  <p className="text-xs text-muted-foreground mt-1.5 italic border-t-2 border-foreground/20 pt-1.5">
                     📚 {hint.reference}
                   </p>
                 )}
@@ -93,15 +102,13 @@ export function HintPanel({ entry, state, onRequestHints, onShowNext, onReveal }
         </AnimatePresence>
 
         {hints && revealedCount < hints.length && (
-          <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}>
-            <Button onClick={onShowNext} variant="outline" className="w-full rounded-full">
-              Show hint {revealedCount + 1}
-            </Button>
-          </motion.div>
+          <Button onClick={onShowNext} variant="outline" className="w-full">
+            Show hint {revealedCount + 1}
+          </Button>
         )}
 
         {hints && (
-          <div className="pt-1 border-t">
+          <div className="pt-1 border-t-2 border-foreground/20">
             <AnimatePresence mode="wait">
               {!state?.answer ? (
                 <motion.div
@@ -124,9 +131,9 @@ export function HintPanel({ entry, state, onRequestHints, onShowNext, onReveal }
                   key="answer"
                   initial={{ opacity: 0, y: 8, scale: 0.96 }}
                   animate={{ opacity: 1, y: 0, scale: 1 }}
-                  className="mt-3 rounded-xl bg-destructive/10 border border-destructive/20 p-3"
+                  className="mt-3 rounded-xl bg-destructive/15 border-2 border-foreground shadow-brutal-sm p-3"
                 >
-                  <p className="text-sm font-bold tracking-wide text-destructive">
+                  <p className="text-sm font-black tracking-wide text-foreground">
                     {state.answer}
                   </p>
                   <p className="text-xs text-muted-foreground mt-1">{state.explanation}</p>
