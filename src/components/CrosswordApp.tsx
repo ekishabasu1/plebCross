@@ -3,9 +3,9 @@
 import { useEffect, useMemo, useState } from "react";
 import confetti from "canvas-confetti";
 import { AnimatePresence, motion } from "framer-motion";
-import { Check, PartyPopper } from "lucide-react";
+import { Check, ChevronLeft, ChevronRight, PartyPopper } from "lucide-react";
 import type { Direction, Hint, PublicEntry, PublicPuzzle } from "@/lib/types";
-import { cellKey, entryForCell, entryKey, findEntryAt } from "@/lib/grid-utils";
+import { cellKey, entryForCell, entryKey, findEntryAt, nextEntry } from "@/lib/grid-utils";
 import { CrosswordGrid } from "./CrosswordGrid";
 import { ClueList } from "./ClueList";
 import { HintPanel, type HintState } from "./HintPanel";
@@ -202,6 +202,17 @@ export function CrosswordApp({ puzzle }: CrosswordAppProps) {
     requestHints(entry);
   }
 
+  function goToEntry(entry: PublicEntry) {
+    setSelected({ row: entry.row, col: entry.col });
+    setDirection(entry.direction);
+    setMobileTab(entry.direction);
+  }
+
+  function goToAdjacentClue(delta: 1 | -1) {
+    if (!activeEntry) return;
+    goToEntry(nextEntry(puzzle, activeEntry, delta));
+  }
+
   async function requestHints(entry: PublicEntry) {
     const key = entryKey(entry.number, entry.direction);
     const existing = hints[key];
@@ -353,22 +364,6 @@ export function CrosswordApp({ puzzle }: CrosswordAppProps) {
           )}
         </AnimatePresence>
 
-        <Card className="px-4 py-2.5 flex-row items-center justify-between gap-3">
-          <div className="min-w-0">
-            <p className="text-xs font-bold text-accent">
-              {activeEntry ? `${activeEntry.number} ${activeEntry.direction === "across" ? "Across" : "Down"}` : "—"}
-            </p>
-            <p className="text-sm font-bold text-foreground truncate">
-              {activeEntry?.clue ?? "Select a clue to begin"}
-            </p>
-          </div>
-          <div className="flex gap-2 shrink-0">
-            <Button onClick={checkCurrentWord} disabled={!activeEntry} size="sm">
-              <Check /> Check
-            </Button>
-          </div>
-        </Card>
-
         <CrosswordGrid
           puzzle={puzzle}
           values={values}
@@ -382,6 +377,40 @@ export function CrosswordApp({ puzzle }: CrosswordAppProps) {
           onBackspace={handleBackspace}
           onMove={handleMove}
         />
+
+        <Card className="px-3 py-2.5 gap-2">
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={() => goToAdjacentClue(-1)}
+              disabled={!activeEntry}
+              aria-label="Previous clue"
+            >
+              <ChevronLeft />
+            </Button>
+            <div className="min-w-0 flex-1 text-center">
+              <p className="text-xs font-bold text-accent">
+                {activeEntry ? `${activeEntry.number} ${activeEntry.direction === "across" ? "Across" : "Down"}` : "—"}
+              </p>
+              <p className="text-sm font-bold text-foreground truncate">
+                {activeEntry?.clue ?? "Select a clue to begin"}
+              </p>
+            </div>
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={() => goToAdjacentClue(1)}
+              disabled={!activeEntry}
+              aria-label="Next clue"
+            >
+              <ChevronRight />
+            </Button>
+            <Button onClick={checkCurrentWord} disabled={!activeEntry} size="sm">
+              <Check /> Check
+            </Button>
+          </div>
+        </Card>
 
         <div className="lg:hidden">
           <HintPanel
