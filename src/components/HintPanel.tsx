@@ -4,7 +4,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { BookOpen, Eye, Lightbulb } from "lucide-react";
 import type { Direction, Hint, PublicEntry } from "@/lib/types";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 
 export interface HintState {
@@ -25,8 +25,6 @@ interface HintPanelProps {
   onShowNext: () => void;
   onReveal: () => void;
 }
-
-const dirLabel: Record<Direction, string> = { across: "Across", down: "Down" };
 
 const HINT_BADGE_VARIANT: Array<"default" | "secondary" | "destructive"> = [
   "default",
@@ -50,13 +48,6 @@ export function HintPanel({ entry, state, onRequestHints, onShowNext, onReveal }
 
   return (
     <Card className="py-0 overflow-hidden gap-0">
-      <CardHeader className="px-4 py-3 bg-secondary border-b-2 border-foreground">
-        <p className="text-xs font-bold text-secondary-foreground">
-          {entry.number} {dirLabel[entry.direction]} · {entry.length} letters
-        </p>
-        <p className="text-sm font-bold text-secondary-foreground mt-0.5">{entry.clue}</p>
-      </CardHeader>
-
       <CardContent className="p-4 space-y-3">
         {!hints && !state?.loading && (
           <Button onClick={onRequestHints} className="w-full" size="lg">

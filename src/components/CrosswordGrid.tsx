@@ -16,6 +16,7 @@ interface CrosswordGridProps {
   onType: (row: number, col: number, letter: string) => void;
   onBackspace: (row: number, col: number) => void;
   onMove: (row: number, col: number, dRow: number, dCol: number) => void;
+  onCheck: () => void;
 }
 
 export function CrosswordGrid({
@@ -29,6 +30,7 @@ export function CrosswordGrid({
   onType,
   onBackspace,
   onMove,
+  onCheck,
 }: CrosswordGridProps) {
   const hiddenInputRef = useRef<HTMLInputElement>(null);
 
@@ -58,6 +60,9 @@ export function CrosswordGrid({
       } else if (e.key === "ArrowUp") {
         e.preventDefault();
         onMove(row, col, -1, 0);
+      } else if (e.key === "Enter") {
+        e.preventDefault();
+        onCheck();
       } else if (/^[a-zA-Z]$/.test(e.key)) {
         // Handled in onChange too, but physical keyboards fire this
         // reliably and synchronously, so prevent the duplicate input event.
@@ -65,7 +70,7 @@ export function CrosswordGrid({
         onType(row, col, e.key.toUpperCase());
       }
     },
-    [onType, onBackspace, onMove]
+    [onType, onBackspace, onMove, onCheck]
   );
 
   function handleHiddenInputChange(e: React.ChangeEvent<HTMLInputElement>) {

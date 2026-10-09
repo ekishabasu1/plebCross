@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import confetti from "canvas-confetti";
 import { AnimatePresence, motion } from "framer-motion";
-import { Check, ChevronLeft, ChevronRight, PartyPopper } from "lucide-react";
+import { ChevronLeft, ChevronRight, PartyPopper } from "lucide-react";
 import type { Direction, Hint, PublicEntry, PublicPuzzle } from "@/lib/types";
 import { cellKey, entryForCell, entryKey, findEntryAt, nextEntry } from "@/lib/grid-utils";
 import { CrosswordGrid } from "./CrosswordGrid";
@@ -348,6 +348,39 @@ export function CrosswordApp({ puzzle }: CrosswordAppProps) {
     { key: "down", entries: downEntries, title: "Down" },
   ];
 
+  const clueNavCard = (
+    <Card className="px-3 py-2.5 gap-2">
+      <div className="flex items-center gap-2">
+        <Button
+          variant="outline"
+          size="icon"
+          onClick={() => goToAdjacentClue(-1)}
+          disabled={!activeEntry}
+          aria-label="Previous clue"
+        >
+          <ChevronLeft />
+        </Button>
+        <div className="min-w-0 flex-1 text-center">
+          <p className="text-xs font-bold text-accent">
+            {activeEntry ? `${activeEntry.number} ${activeEntry.direction === "across" ? "Across" : "Down"}` : "—"}
+          </p>
+          <p className="text-sm font-bold text-foreground truncate">
+            {activeEntry?.clue ?? "Select a clue to begin"}
+          </p>
+        </div>
+        <Button
+          variant="outline"
+          size="icon"
+          onClick={() => goToAdjacentClue(1)}
+          disabled={!activeEntry}
+          aria-label="Next clue"
+        >
+          <ChevronRight />
+        </Button>
+      </div>
+    </Card>
+  );
+
   return (
     <div className="max-w-5xl mx-auto px-4 py-6 grid gap-6 lg:grid-cols-[minmax(0,1fr)_360px]">
       <div className="space-y-4">
@@ -376,41 +409,10 @@ export function CrosswordApp({ puzzle }: CrosswordAppProps) {
           onType={handleType}
           onBackspace={handleBackspace}
           onMove={handleMove}
+          onCheck={checkCurrentWord}
         />
 
-        <Card className="px-3 py-2.5 gap-2">
-          <div className="flex items-center gap-2">
-            <Button
-              variant="outline"
-              size="icon"
-              onClick={() => goToAdjacentClue(-1)}
-              disabled={!activeEntry}
-              aria-label="Previous clue"
-            >
-              <ChevronLeft />
-            </Button>
-            <div className="min-w-0 flex-1 text-center">
-              <p className="text-xs font-bold text-accent">
-                {activeEntry ? `${activeEntry.number} ${activeEntry.direction === "across" ? "Across" : "Down"}` : "—"}
-              </p>
-              <p className="text-sm font-bold text-foreground truncate">
-                {activeEntry?.clue ?? "Select a clue to begin"}
-              </p>
-            </div>
-            <Button
-              variant="outline"
-              size="icon"
-              onClick={() => goToAdjacentClue(1)}
-              disabled={!activeEntry}
-              aria-label="Next clue"
-            >
-              <ChevronRight />
-            </Button>
-            <Button onClick={checkCurrentWord} disabled={!activeEntry} size="sm">
-              <Check /> Check
-            </Button>
-          </div>
-        </Card>
+        <div className="lg:hidden">{clueNavCard}</div>
 
         <div className="lg:hidden">
           <HintPanel
@@ -453,6 +455,7 @@ export function CrosswordApp({ puzzle }: CrosswordAppProps) {
       </div>
 
       <div className="hidden lg:flex flex-col gap-4">
+        {clueNavCard}
         <HintPanel
           entry={activeEntry ?? null}
           direction={effectiveDirection}
